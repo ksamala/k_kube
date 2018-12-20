@@ -5,4 +5,6 @@ metadata:
 
  # Commands
  # kubectl get namespaces
- # kubectl create -f kube-auto.yml
+ # kubectl apply -f  namespace.yml
+
+

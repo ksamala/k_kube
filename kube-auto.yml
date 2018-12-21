@@ -2,6 +2,9 @@
 - hosts: localhost
   gather_facts: no
   tasks: 
-    - shell: kubectl apply -f namespace.yml
-    - shell: kubectl apply -f configmap.yml
-    
+    - name: automate
+      block:
+        - shell: kubectl apply -f namespace.yml
+        - shell: kubectl apply -f configmap.yml
+        - shell: kubectl apply -f secret.yml
+        

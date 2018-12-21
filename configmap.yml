@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-auto-cm
+  namespace: kube-auto
+data:
+  log.level: INFO
+  log.level1: INFO1
+  log.level2: INFO2

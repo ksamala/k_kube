@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-auto-deployment
+  namespace: kube-auto
+  labels:
+    type: mac
+    app: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      securityContext:
+        runAsUser: 123
+        fsGroup: 2000
+      containers:
+      - name: nginx
+        image: gcr.io/google_containers/busybox
+        command: [ "/bin/sh", "-c", "--" ]
+        args: [ "while true; do sleep 30; done;" ]
+        env:
+          - name: LBL-1
+            valueFrom:
+              configMapKeyRef:
+                name: kube-auto-cm
+                key: log.level
+          - name: LBL-2
+            valueFrom:
+              configMapKeyRef:
+                name: kube-auto-cm
+                key: log.level1
+          - name: LBL-3
+            valueFrom:
+              configMapKeyRef:
+                name: kube-auto-cm
+                key: log.level2
+          - name: SEC_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: kube-auto-secret
+                key: username
+          - name: SEC_PASSWD
+            valueFrom:
+              secretKeyRef:
+                name: kube-auto-secret
+                key: password
+        resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"

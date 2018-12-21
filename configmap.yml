@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: kube-auto-cm
   namespace: kube-auto
+  labels: 
+    type: mac
 data:
   log.level: INFO
   log.level1: INFO1

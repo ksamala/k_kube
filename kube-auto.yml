@@ -7,5 +7,6 @@
         - shell: kubectl apply -f namespace.yml
         - shell: kubectl apply -f configmap.yml
         - shell: kubectl apply -f secret.yml
+        - shell: kubectl apply -f deployment.yml
         - shell: rm -rf *.retry
         

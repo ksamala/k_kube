@@ -7,10 +7,18 @@ metadata:
     type: mac
     app: nginx
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: nginx
+   #--------------------- RollingUpdate
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  #---------------------
   template:
     metadata:
       labels:
@@ -19,11 +27,25 @@ spec:
       securityContext:
         runAsUser: 123
         fsGroup: 2000
+      initContainers:
+      - name: init-myservice
+        image: busybox
+        imagePullPolicy: Always
+        command: ['sh', '-c', 'pwd']
+        resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
       containers:
       - name: nginx
-        image: gcr.io/google_containers/busybox
+        image: nginx:latest
+        # gcr.io/google_containers/busybox
+        imagePullPolicy: Always
         command: [ "/bin/sh", "-c", "--" ]
-        args: [ "while true; do sleep 30; done;" ]
+        args: [ "while true; do sleep 6000; done;" ]
         env:
           - name: LBL-1
             valueFrom:
@@ -57,3 +79,21 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "200m"
+        volumeMounts:
+        - name: mount-secrets
+          mountPath: "/secrets/kubeauto"
+          readOnly: true
+        # livenessProbe: checks if container is alive, readiness checks if it is able to respond for requests.
+        readinessProbe:
+          exec:
+            command:
+            - cat
+            - /etc/passwd
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: mount-secrets
+        secret:
+          secretName: kube-auto-secret
+
+
